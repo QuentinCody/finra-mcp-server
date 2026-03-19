@@ -4,9 +4,10 @@ import { createExecuteTool } from "@bio-mcp/shared/codemode/execute-tool";
 import { finraCatalog } from "../spec/catalog";
 import { createFinraApiFetch } from "../lib/api-adapter";
 
+/** Minimal shape required from the worker Env for Code Mode registration. */
 interface CodeModeEnv {
-    FINRA_DATA_DO: DurableObjectNamespace;
-    CODE_MODE_LOADER: WorkerLoader;
+    FINRA_DATA_DO: Pick<Env["FINRA_DATA_DO"], "get" | "idFromName">;
+    CODE_MODE_LOADER: Env["CODE_MODE_LOADER"];
     FINRA_CLIENT_ID?: string;
     FINRA_CLIENT_SECRET?: string;
 }

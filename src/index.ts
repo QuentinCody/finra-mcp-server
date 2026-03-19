@@ -1,3 +1,4 @@
+// FINRA MCP Server
 import { McpAgent } from "agents/mcp";
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { registerQueryData } from "./tools/query-data";
@@ -7,21 +8,14 @@ import { FinraDataDO } from "./do";
 
 export { FinraDataDO };
 
-interface FinraEnv {
-	FINRA_DATA_DO: DurableObjectNamespace;
-	CODE_MODE_LOADER: WorkerLoader;
-	FINRA_CLIENT_ID?: string;
-	FINRA_CLIENT_SECRET?: string;
-}
-
-export class MyMCP extends McpAgent {
-	server: any = new McpServer({
+export class MyMCP extends McpAgent<Env> {
+	server = new McpServer({
 		name: "finra",
 		version: "0.1.0",
 	});
 
 	async init() {
-		const env = this.env as unknown as FinraEnv;
+		const env = this.env;
 		registerQueryData(this.server, env);
 		registerGetSchema(this.server, env);
 		registerCodeMode(this.server, env);
