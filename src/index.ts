@@ -1,4 +1,5 @@
-// FINRA MCP Server
+// FINRA MCP Server — short interest, daily short volume, Reg SHO thresholds
+// Code Mode only: finra_search, finra_execute, query_data, get_schema (OAuth 2.0 client credentials)
 import { McpAgent } from "agents/mcp";
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { registerQueryData } from "./tools/query-data";
