@@ -1,0 +1,46 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "finra-mcp-server",
+  "main": "src/index.ts",
+  "compatibility_date": "2025-03-10",
+  "compatibility_flags": ["nodejs_compat"],
+  "alias": {
+    "ai": "./src/ai-stub.ts"
+  },
+  "vars": {
+    // FINRA_CLIENT_ID and FINRA_CLIENT_SECRET must be set as secrets:
+    //   wrangler secret put FINRA_CLIENT_ID
+    //   wrangler secret put FINRA_CLIENT_SECRET
+  },
+  "migrations": [
+    {
+      "new_sqlite_classes": ["FinraDataDO"],
+      "tag": "v1"
+    },
+    {
+      "new_sqlite_classes": ["MyMCP"],
+      "tag": "v2"
+    }
+  ],
+  "durable_objects": {
+    "bindings": [
+      {
+        "class_name": "FinraDataDO",
+        "name": "FINRA_DATA_DO"
+      },
+      {
+        "class_name": "MyMCP",
+        "name": "MCP_OBJECT"
+      }
+    ]
+  },
+  "worker_loaders": [
+    { "binding": "CODE_MODE_LOADER" }
+  ],
+  "observability": {
+    "enabled": true
+  },
+  "dev": {
+    "port": 8851
+  }
+}
