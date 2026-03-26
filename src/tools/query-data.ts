@@ -9,7 +9,7 @@ interface QueryDataArgs {
     limit?: number;
 }
 
-export function registerQueryData(server: McpServer, env?: { FINRA_DATA_DO?: unknown }) {
+export function registerQueryData(server: McpServer, env?: { FINRA_DATA_DO?: unknown }): void {
     const handler = createQueryDataHandler("FINRA_DATA_DO", "finra");
 
     server.registerTool(

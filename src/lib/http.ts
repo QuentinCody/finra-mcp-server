@@ -83,7 +83,11 @@ export async function finraFetch(
 ): Promise<Response> {
     const baseUrl = opts?.baseUrl ?? FINRA_API_BASE;
 
-    const token = await getAccessToken(opts!.clientId, opts!.clientSecret);
+    if (!opts?.clientId || !opts?.clientSecret) {
+        throw new Error("FINRA API requires clientId and clientSecret in options");
+    }
+
+    const token = await getAccessToken(opts.clientId, opts.clientSecret);
 
     const headers: Record<string, string> = {
         Accept: "application/json",
@@ -103,7 +107,7 @@ export async function finraFetch(
     // On 401, clear token cache and retry once with a fresh token
     if (response.status === 401) {
         clearToken();
-        const freshToken = await getAccessToken(opts!.clientId, opts!.clientSecret);
+        const freshToken = await getAccessToken(opts.clientId, opts.clientSecret);
         const retryHeaders: Record<string, string> = {
             Accept: "application/json",
             Authorization: `Bearer ${freshToken}`,

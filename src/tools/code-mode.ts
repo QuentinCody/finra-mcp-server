@@ -16,7 +16,7 @@ interface CodeModeEnv {
 export function registerCodeMode(
     server: McpServer,
     env: CodeModeEnv,
-) {
+): void {
     const apiFetch = createFinraApiFetch({
         FINRA_CLIENT_ID: env.FINRA_CLIENT_ID ?? "",
         FINRA_CLIENT_SECRET: env.FINRA_CLIENT_SECRET ?? "",

@@ -7,7 +7,7 @@ interface GetSchemaArgs {
     data_access_id?: string;
 }
 
-export function registerGetSchema(server: McpServer, env?: { FINRA_DATA_DO?: unknown }) {
+export function registerGetSchema(server: McpServer, env?: { FINRA_DATA_DO?: unknown }): void {
     const handler = createGetSchemaHandler("FINRA_DATA_DO", "finra");
 
     server.registerTool(
