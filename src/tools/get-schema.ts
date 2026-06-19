@@ -32,7 +32,7 @@ export function registerGetSchema(server: McpServer, env?: { FINRA_DATA_DO?: unk
             return handler(
                 typedArgs,
                 envRecord,
-                (extra as { sessionId?: string })?.sessionId,
+                (extra as Record<string, unknown>),
             );
         },
     );

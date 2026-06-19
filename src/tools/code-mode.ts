@@ -30,6 +30,8 @@ export function registerCodeMode(
 
     const executeTool = createExecuteTool({
         prefix: "finra",
+        // Verifiable provenance: finra_execute results carry a _meta.citation.
+        source: { id: "finra", name: "FINRA", url: "https://www.finra.org" },
         catalog: finraCatalog,
         apiFetch,
         doNamespace: env.FINRA_DATA_DO,
