@@ -1,3 +1,4 @@
+import { buildHealthResponse, configureCitationSigning } from "@bio-mcp/shared";
 // FINRA MCP Server — short interest, daily short volume, Reg SHO thresholds
 // Code Mode only: finra_search, finra_execute, query_data, get_schema (OAuth 2.0 client credentials)
 import { McpAgent } from "agents/mcp";
@@ -16,6 +17,8 @@ export class MyMCP extends McpAgent<Env> {
 	});
 
 	async init() {
+
+		configureCitationSigning(this.env);
 		const env = this.env;
 		registerQueryData(this.server, env);
 		registerGetSchema(this.server, env);
@@ -28,10 +31,7 @@ export default {
 		const url = new URL(request.url);
 
 		if (url.pathname === "/health") {
-			return new Response("ok", {
-				status: 200,
-				headers: { "content-type": "text/plain" },
-			});
+			return buildHealthResponse("finra");
 		}
 
 		if (url.pathname === "/mcp") {
