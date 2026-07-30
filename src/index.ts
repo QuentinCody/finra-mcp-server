@@ -1,8 +1,8 @@
 import { buildHealthResponse, configureCitationSigning } from "@bio-mcp/shared";
 // FINRA MCP Server — short interest, daily short volume, Reg SHO thresholds
 // Code Mode only: finra_search, finra_execute, query_data, get_schema (OAuth 2.0 client credentials)
-import { McpAgent } from "agents/mcp";
-import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
+import { StatelessMcpWorker } from "@bio-mcp/shared/mcp";
+import { McpServer } from "@bio-mcp/shared/mcp";
 import { registerQueryData } from "./tools/query-data";
 import { registerGetSchema } from "./tools/get-schema";
 import { registerCodeMode } from "./tools/code-mode";
@@ -10,7 +10,7 @@ import { FinraDataDO } from "./do";
 
 export { FinraDataDO };
 
-export class MyMCP extends McpAgent<Env> {
+export class MyMCP extends StatelessMcpWorker<Env> {
 	server = new McpServer({
 		name: "finra",
 		version: "0.1.0",
@@ -35,7 +35,7 @@ export default {
 		}
 
 		if (url.pathname === "/mcp") {
-			return MyMCP.serve("/mcp", { binding: "MCP_OBJECT" }).fetch(
+			return MyMCP.serve("/mcp").fetch(
 				request,
 				env,
 				ctx,

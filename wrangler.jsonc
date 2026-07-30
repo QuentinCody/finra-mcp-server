@@ -34,6 +34,10 @@
 			"new_sqlite_classes": [
 				"MyMCP"
 			]
+		},
+		{
+			"tag": "mcp-2026-07-28-stateless",
+			"deleted_classes": ["MyMCP"]
 		}
 	],
 	"durable_objects": {
@@ -41,12 +45,7 @@
 			{
 				"class_name": "FinraDataDO",
 				"name": "FINRA_DATA_DO"
-			},
-			{
-				"class_name": "MyMCP",
-				"name": "MCP_OBJECT"
-			}
-		]
+			}]
 	},
 	"worker_loaders": [
 		{
