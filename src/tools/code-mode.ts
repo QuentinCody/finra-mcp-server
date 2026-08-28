@@ -17,9 +17,12 @@ export function registerCodeMode(
     server: McpServer,
     env: CodeModeEnv,
 ): void {
+    // Pass the secrets through as `string | undefined`. Coercing an unset
+    // secret to "" is indistinguishable from a configured-but-empty one, and
+    // it used to trip a pre-flight throw that stopped every anonymous call.
     const apiFetch = createFinraApiFetch({
-        FINRA_CLIENT_ID: env.FINRA_CLIENT_ID ?? "",
-        FINRA_CLIENT_SECRET: env.FINRA_CLIENT_SECRET ?? "",
+        FINRA_CLIENT_ID: env.FINRA_CLIENT_ID,
+        FINRA_CLIENT_SECRET: env.FINRA_CLIENT_SECRET,
     });
 
     const searchTool = createSearchTool({

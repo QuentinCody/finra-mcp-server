@@ -1,6 +1,7 @@
 import { buildHealthResponse, configureCitationSigning } from "@bio-mcp/shared";
 // FINRA MCP Server — short interest, daily short volume, Reg SHO thresholds
-// Code Mode only: finra_search, finra_execute, query_data, get_schema (OAuth 2.0 client credentials)
+// Code Mode only: finra_search, finra_execute, query_data, get_schema
+// The otcMarket dataset group is anonymous-public; FINRA_CLIENT_ID/SECRET are optional (see src/lib/http.ts)
 import { StatelessMcpWorker } from "@bio-mcp/shared/mcp";
 import { McpServer } from "@bio-mcp/shared/mcp";
 import { registerQueryData } from "./tools/query-data";
