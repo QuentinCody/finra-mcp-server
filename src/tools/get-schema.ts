@@ -10,8 +10,8 @@ interface GetSchemaArgs {
 export function registerGetSchema(server: McpServer, env?: { FINRA_DATA_DO?: unknown }): void {
     const handler = createGetSchemaHandler("FINRA_DATA_DO", "finra");
 
-    server.registerTool(
-        "finra_get_schema",
+    for (const name of ["finra_get_schema", "mcp_finra_get_schema"]) server.registerTool(
+        name,
         {
             title: "Get Staged Data Schema",
             description:

@@ -12,8 +12,8 @@ interface QueryDataArgs {
 export function registerQueryData(server: McpServer, env?: { FINRA_DATA_DO?: unknown }): void {
     const handler = createQueryDataHandler("FINRA_DATA_DO", "finra");
 
-    server.registerTool(
-        "finra_query_data",
+    for (const name of ["finra_query_data", "mcp_finra_query_data"]) server.registerTool(
+        name,
         {
             title: "Query Staged FINRA Data",
             description:

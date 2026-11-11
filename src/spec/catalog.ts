@@ -1,4 +1,6 @@
 import type { ApiCatalog, ApiEndpoint } from "@bio-mcp/shared/codemode/catalog";
+import {marketEndpoints, marketWorkflows} from "./market";
+import {exportEndpoints, exportWorkflows} from "./exports";
 
 /**
  * The `otcMarket` dataset group. FINRA serves every one of these with no
@@ -229,6 +231,8 @@ function queryEndpoint(ds: FinraDataset): ApiEndpoint {
 }
 
 const endpoints: ApiEndpoint[] = [
+    ...marketEndpoints,
+    ...exportEndpoints,
     ...DATASETS.flatMap((ds) => [browseEndpoint(ds), queryEndpoint(ds)]),
     {
         method: "GET",
@@ -253,17 +257,18 @@ export const finraCatalog: ApiCatalog = {
     name: "FINRA Short Interest & Market Data",
     baseUrl: "https://api.finra.org",
     version: "1.0",
-    auth: "none",
+    auth: "optional",
+    workflows: [...marketWorkflows, ...exportWorkflows],
     endpointCount: endpoints.length,
     notes:
-        "AUTH: none. Every dataset below is in FINRA's `otcMarket` group, which is served anonymously\n" +
-        "(verified 2026-08-27 by direct request with no Authorization header). FINRA_CLIENT_ID and\n" +
-        "FINRA_CLIENT_SECRET are optional; when set, a bearer token is attached, which unlocks nothing here\n" +
-        "but is required for the gated groups (fixedIncomeMarket, equityMarket, firmMargin, regulatoryFilings).\n" +
+        "AUTH: otcMarket remains anonymous. fixedIncomeMarket requires a Public/Firm/Organization credential; reportcard requires entitled Firm credentials.\n" +
+        "Configure FINRA_CLIENT_ID and FINRA_CLIENT_SECRET in Worker secrets. A Public credential does not authorize firm reports.\n" +
+        "New market/report/discovery routes return {data: nativePayload, _mcp: provenanceAndHeaders}; OTC routes preserve native shapes.\n" +
+        "Data-Version selects API schema, not a historical snapshot. /datasets discovers capabilities and versions.\n" +
+        "Market exports use POST /exports/group/{group}/name/{dataset}, then a separate GET status/result step with the receipt UUID. Read catalog limits first; no automatic polling or submission replay. All export steps require credentials.\n" +
         "\n" +
-        "FILTERING — the one quirk that matters:\n" +
-        "- GET honors ONLY `limit` and `offset`. Every other query param is SILENTLY IGNORED: FINRA returns\n" +
-        "  HTTP 200 with the same unfiltered first page, which reads as a plausible but wrong answer.\n" +
+        "OTC FILTERING (TRACE summary GET parameters follow their own contract):\n" +
+        "- Use POST for row filtering. Arbitrary GET field predicates can be silently ignored.\n" +
         "  `api.get('/short-interest', { symbolCode: 'AAPL' })` returns Agilent, not Apple.\n" +
         "- Real filtering is POST with a JSON body:\n" +
         "    api.post('/short-interest', {\n" +
@@ -272,13 +277,13 @@ export const finraCatalog: ApiCatalog = {
         "      compareFilters: [{ fieldName: 'symbolCode', fieldValue: 'AAPL', compareType: 'EQUAL' }],\n" +
         "      dateRangeFilters: [{ fieldName: 'settlementDate', startDate: '2024-01-01', endDate: '2024-12-31' }],\n" +
         "    })\n" +
-        "- compareType: EQUAL, NOT_EQUAL, GT, LT, GTE, LTE. domainFilters take {fieldName, values: [...]} for IN.\n" +
+        "- Use documented compareType values, e.g. EQUAL or GREATER; do not invent SQL abbreviations. domainFilters use {fieldName, values: [...]}.\n" +
         "- Dates are yyyy-MM-dd (or 'yyyy-MM-dd HH:mm:ss.SSS'); range ends are inclusive.\n" +
         "- sortFields returns HTTP 400 unless EVERY partition key of the dataset is pinned by an EQUAL\n" +
         "  compareFilter. Page with limit/offset instead.\n" +
         "\n" +
         "OTHER CONVENTIONS:\n" +
-        "- Responses are JSON arrays of objects; an empty array is a real 200, not an error.\n" +
+        "- OTC data responses are native JSON arrays; an empty array alone does not establish complete coverage.\n" +
         "- limit maxes out at 5000 per request; the response payload cap is 3 MB.\n" +
         "- Rate limits: 1,200 synchronous requests/min per IP; 20 async requests/min per dataset per account.\n" +
         "- Code Mode paths map to FINRA dataset names: /short-interest, /short-volume, /threshold-list,\n" +

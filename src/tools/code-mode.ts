@@ -25,11 +25,17 @@ export function registerCodeMode(
         FINRA_CLIENT_SECRET: env.FINRA_CLIENT_SECRET,
     });
 
+    const registrar = {tool: (...args: unknown[]) => {
+        const [name, ...rest] = args;
+        const register = server.tool.bind(server) as (...values: unknown[]) => void;
+        register(name, ...rest); register(`mcp_${String(name)}`, ...rest);
+    }};
+
     const searchTool = createSearchTool({
         prefix: "finra",
         catalog: finraCatalog,
     });
-    searchTool.register(server as unknown as { tool: (...args: unknown[]) => void });
+    searchTool.register(registrar);
 
     const executeTool = createExecuteTool({
         prefix: "finra",
@@ -37,8 +43,10 @@ export function registerCodeMode(
         source: { id: "finra", name: "FINRA", url: "https://www.finra.org" },
         catalog: finraCatalog,
         apiFetch,
+        maxInlineBytes: 30 * 1024,
+        timeout: 90_000,
         doNamespace: env.FINRA_DATA_DO,
         loader: env.CODE_MODE_LOADER,
     });
-    executeTool.register(server as unknown as { tool: (...args: unknown[]) => void });
+    executeTool.register(registrar);
 }
