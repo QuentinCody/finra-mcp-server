@@ -1,5 +1,6 @@
 {
 	"$schema": "node_modules/wrangler/config-schema.json",
+	"services": [{ "binding": "FEEDBACK_INBOX", "service": "mcp-client-bio", "entrypoint": "FeedbackInbox" }],
 	"name": "finra-mcp-server",
 	"main": "src/index.ts",
 	"compatibility_date": "2025-03-10",
@@ -9,7 +10,7 @@
 	"alias": {
 		"ai": "./src/ai-stub.ts"
 	},
-	"vars": {},
+	"vars": { "MCP_FEEDBACK_SOURCE": "finra" },
 	"migrations": [
 		{
 			"new_sqlite_classes": [
